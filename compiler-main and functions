@@ -1,0 +1,576 @@
+import re
+
+codeG_ls = []
+codeG_op = []
+rG = []
+
+
+def reset_sourceCode(text):
+    t = ""
+    #text=text1.replace("pi","3.14")
+
+    for i in range(len(text)):
+        '''
+        if text[i] == 'p' and i < len(text) - 1 :
+            if text[i + 1] == 'i':
+                text[i] = "3"
+                text[i + 1] = ".14"
+                if i < len(text) - 2 and re.match(pattern, text[i + 2]) is None:
+                    text[i + 2] = '*' + text[i + 2]
+                if i>0 and re.match(pattern, text[i - 1]) is None :
+                    text[i - 1] = '*' + text[i - 1]
+        '''
+        if (text[i]!="i") and text[i].isalpha() or text[i].isdigit() or text[i].isdecimal():
+
+            if i < len(text) - 1 and (text[i + 1].isalpha() or text[i + 1].isdigit() or text[i + 1].isdecimal()):
+                if text[i]=="p" and text[i+1]=="i":
+                    t += text[i]
+                    i+=1
+                t += text[i] + "*"
+            else:
+                t += text[i]
+        elif (text[i]!="i"):
+            t += text[i]
+    text = t.replace("pi", "3.14")
+    return text
+    ###########
+
+
+def lexical_analyzer(result):
+    i = 0
+    id = 0
+    result2 = ""
+    for i in result:
+
+        if re.match(r'[a-z]|[A-Z]', i) is None:
+            result2 += i
+        else:
+            result2 += "id" + str(id)
+            id += 1
+
+    return result2
+    ###########
+
+
+s = ""
+
+
+def sem(eleInList):
+    if sematic == 1:
+        if check == 'Y':
+            Z = re.match(r'\d', eleInList)
+            if Z and re.match(r'^-?\d+(?:\.\d+)$', eleInList) is None:
+                out = eleInList
+                print("inttofloat(", eleInList, ")", end="")
+                l_inttofloat.append(out)
+
+
+# parse tree
+
+def create_l1():
+    l1 = []
+    for m in result2:
+        z = re.match(pattern, m)
+        if z:
+            l1.append(m)
+    # print(l1)
+    return l1
+
+
+def createtree(result2):
+    tab = " "
+    result2 = re.split(pattern, result2)
+    l1 = create_l1()  # to add operations
+
+    p3 = r'([\%\*\/])'
+    i = 0
+    for i in range(len(result2)):
+        if result2[i] == "=":
+            print(tab, result2[i])
+            print("/   \ ")
+            print(result2[i - 1], end=" ")
+            l1.remove(result2[i])
+            break
+    i = 0
+    for i in range(len(result2)):
+        if ("-" in l1) or ("+" in l1):
+            if len(l1) == 1 and (result2[i] == "-" or result2[i] == "+"):
+                print(tab, result2[i])
+                print(tab, "  /   \ ")
+                tab += " "
+                print(tab, result2[i - 1], end="")
+                if sematic == 1 and result2[i - 1].isdigit():
+                    print(".0", end=" ")
+                sem(result2[i - 1])
+
+                print(" ", result2[i + 1], end="")
+                if sematic == 1 and result2[i + 1].isdigit():
+                    print(".0", end=" ")
+
+                sem(result2[i + 1])
+                l1.remove(result2[i])
+                # if sematic==1:
+                #   if check=='Y':
+                #      sem(result2[i])
+            if len(l1) > 1 and (result2[i] == "-" or result2[i] == "+"):
+                # more than 2 op
+                z1 = 0
+                z2 = 0
+                print(tab, result2[i])
+                print(tab, "  /   \ ")
+                if i > 1 and i < len(result2) - 2:
+                    z1 = re.match(p3, result2[i + 2])
+                    z2 = re.match(p3, result2[i - 2])
+                if z1 and z2:
+                    print(tab, "  ", result2[i - 2], "  ", result2[i + 2])
+                    print(tab, "  /   \  /  \  ")
+                    tab += " "
+
+                    print(tab, result2[i - 3], end="")
+                    if sematic == 1 and result2[i - 3].isdigit():
+                        print(".0", end=" ")
+                    sem(result2[i - 3])
+
+                    print(result2[i - 1], end="")
+                    if sematic == 1 and result2[i - 1].isdigit():
+                        print(".0", end=" ")
+                    sem(result2[i - 1])
+
+                    print(result2[i + 1], end="")
+                    if sematic == 1 and result2[i + 1].isdigit():
+                        print(".0", end=" ")
+                    sem(result2[i + 1])
+                    # if result2[i +3].isdigit() and sematic == 1:
+                    #     result2[i +3] = float(result2[i +3])
+                    print(result2[i + 3], end="")
+                    if sematic == 1 and result2[i + 3].isdigit():
+                        print(".0", end=" ")
+                    sem(result2[i + 3])
+                    l1.remove(result2[i])
+                    l1.remove(result2[i - 2])
+                    l1.remove(result2[i + 2])
+                else:
+                    ind = l1.index(result2[i])
+                    if ind == 0:
+                        print(tab, result2[i - 1], end="")
+                        if sematic == 1 and result2[i - 1].isdigit():
+                            print(".0", end=" ")
+                        sem(result2[i - 1])
+                    else:
+                        # if result2[i + 1].isdigit() and sematic == 1:
+                        #     result2[i + 1] = float(result2[i + 1])
+                        print(tab, result2[i + 1], end="")
+                        if sematic == 1 and result2[i + 1].isdigit():
+                            print(".0", end=" ")
+                        sem(result2[i + 1])
+                    tab += " "
+                    l1.remove(result2[i])
+        i = 0
+    nodigit = 0
+    for i in range(len(result2)):
+        flag = 0
+        if len(l1) == 1 and (result2[i] == "/" or result2[i] == "*" or result2[i] == "%"):
+            print(tab, result2[i])
+            print(tab, "  /   \ ")
+            # if result2[i-1].isdigit() and sematic==1:
+            #     result2[i-1]=float(result2[i-1])
+            print(tab, result2[i - 1], " ", end="")
+            if sematic == 1 and result2[i - 1].isdigit():
+                print(".0", end=" ")
+            sem(result2[i - 1])
+
+            # if result2[i+1].isdigit() and sematic==1:
+            #     result2[i+1]=float(result2[i+1])
+            print(result2[i + 1], end="")
+            if sematic == 1 and result2[i + 1].isdigit():
+                print(".0", end=" ")
+            sem(result2[i + 1])
+            tab += " "
+            l1.remove(result2[i])
+            flag = 1
+
+        if len(l1) > 1 and (result2[i] == "/" or result2[i] == "*" or result2[i] == "%"):
+            print(tab, result2[i])
+            print(tab, "  /   \ ")
+            # if result2[i-1].isdigit() and sematic==1:
+            #     result2[i-1]=float(result2[i-1])
+            print(tab, result2[i - 1], end="")
+            if sematic == 1 and result2[i - 1].isdigit():
+                print(".0", end=" ")
+            sem(result2[i - 1])
+            tab += " "
+            l1.remove(result2[i])
+        # if sematic == 1: #and flag==1:
+        # if check == 'Y':
+        # sem(result2[i])
+
+
+def inttofloat(ls):
+    lsx = []
+    for i in ls:
+        #if Z and re.match(r'^-?\d+(?:\.\d+)$', eleInList) is None:
+        # if re.match(r'[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?$',i) :
+        x = "inttofloat(" + str(i) + ")"
+        lsx.append(x)
+    return lsx
+
+
+def create_pq(r):
+    icg_ls = []
+    icg_op = []
+    r_c = r.copy()
+    i = 1
+    while i < len(r_c) - 1:
+        if r_c[i] == '*' or r_c[i] == '/':
+            if r_c[i - 1] != '_' and r_c[i + 1] != '_':
+                icg_ls.append(r_c[i - 1])
+                icg_ls.append(r_c[i + 1])
+                icg_op.append(r_c[i])
+                r_c.remove(r_c[i + 1])
+                # r_c.remove(r_c[i])
+                del r_c[i]
+                r_c.insert(i, '_')
+                r_c.remove(r_c[i - 1])
+        i += 1
+
+    t = 1
+    flo = 0
+    if check == 'Y' and optimizer == 0:
+        me = ''.join(icg_ls)
+        if re.findall(r'^-?\d+(?:\.\d+)$', me) is None and len(l_inttofloat) == 0:  # INTTOFLOAT ID
+            for i in range(len(icg_ls)):
+                if re.match(r'^-?\d+(?:\.\d+)$', icg_ls[i]) is None:
+                    print("t", t, "= inttofloat(", icg_ls[i], ")")
+                    icg_ls[i] = "t" + str(t)
+
+                    t += 1
+
+            for id in range(1, len(r_c)):
+                if re.match(r'[a-z]|[A-Z]', r_c[id]):
+                    print("t", t, "= inttofloat(", r_c[id], ")")
+                    r_c[id] = "t" + str(t)
+                    t += 1
+                # else:
+        else:  # INTTOFLOAT NBRS
+            for id in range(len(r_c)):
+                if re.match(r'[0-9]+', r_c[id]):
+                    if flo < len(l_inttofloat):
+                        print("t", t, "= inttofloat(", l_inttofloat[flo], ")")
+                        r_c[id] = "t" + str(t)
+                        t += 1
+                        flo += 1
+
+            for id in range(len(icg_ls)):
+                if re.match(r'[0-9]+', icg_ls[id]):
+                    if flo < len(l_inttofloat):
+                        print("t", t, "= inttofloat(", l_inttofloat[flo], ")")
+                        icg_ls[id] = "t" + str(t)
+                        t += 1
+                        flo += 1
+
+    flo = 0
+    if check == 'Y' and optimizer == 1:
+        me=''.join(icg_ls)
+        if re.findall(r'^-?\d+(?:\.\d+)$',me) is None and len(l_inttofloat) == 0:  # INTTOFLOAT ID
+            for i in range(len(icg_ls)):
+                #
+                if re.match(r'^-?\d+(?:\.\d+)$', icg_ls[i]) is None:
+                    print("t", t, "= #", icg_ls[i])
+                    icg_ls[i] = "t" + str(t)
+                    t += 1
+
+            for id in range(1, len(r_c)):
+                if re.match(r'[a-z]|[A-Z]', r_c[id]):
+                    print("t", t, "= #", r_c[id])
+
+                    r_c[id] = "t" + str(t)
+                    t += 1
+        else:  # INTTOFLOAT NBRS
+            for id in range(len(r_c)):
+                if re.match(r'[0-9]+', r_c[id]):
+                    if flo < len(l_inttofloat):
+                        # print("t", t, "= #", float(l_inttofloat[flo]))
+                        r_c[id] = "#" + str(float(l_inttofloat[flo]))
+
+                        # t += 1
+                        flo += 1
+
+            for id in range(len(icg_ls)):
+                if re.match(r'[0-9]+', icg_ls[id]):
+                    if flo < len(l_inttofloat):
+                        icg_ls[id] = "#" + str(float(l_inttofloat[flo]))
+                        # codeG_ls.append(icg_ls[id])#////////////////////////////
+                        # t += 1
+                        flo += 1
+
+    # print(r_c)
+    # print(icg_ls)
+    op = 0
+    f=0
+    for i in range(0, len(icg_ls) - 1, 2):
+        if op<len(icg_op):
+            if optimizer==0:
+                print("t", t, "=", icg_ls[i], icg_op[op], icg_ls[i + 1])
+            else:#opt=1
+                me=''.join(r)
+                x=icg_ls[i+1]
+               # ind=r_c.index(x)
+                ind=0
+                #print(me)
+                if len(re.findall(r'([\+\-\%\*\/])',me)) ==1 or f==1:
+                    print(r_c[0], "=", icg_ls[i], icg_op[op], icg_ls[i + 1])
+
+                else:
+                    print("t",t, "=", icg_ls[i], icg_op[op], icg_ls[i + 1])
+                    f=1
+            op += 1
+            if '_' in r_c:
+                index = r_c.index('_')
+                r_c[index] = "t" + str(t)
+            t += 1
+
+    i = 2
+    while i < len(r_c) - 1:
+        if re.match(pattern, r_c[i]):
+            if len(r_c) <= 5 and optimizer == 1:
+                print(r[0], "=", r_c[i - 1], r_c[i], r_c[i + 1])
+
+                codeG_op = icg_op.copy()
+                rG = r_c.copy()
+                codeG_ls = icg_ls.copy()
+                code_generator(codeG_ls, codeG_op, rG)
+                return 0
+            else:
+                print("t", t, "=", r_c[i - 1], r_c[i], r_c[i + 1])
+            r_c.remove(r_c[i + 1])
+            del r_c[i]
+            r_c.insert(i, "t" + str(t))
+            r_c.remove(r_c[i - 1])
+            t += 1
+        i += 1
+    if optimizer == 0 and ('+' in r_c or '-' in r_c or '*' in r_c or '/' in r_c):
+        print("t", t, end="")
+        t += 1
+        for i in range(1, len(r_c)):
+            print(r_c[i], end="")
+        print()
+        print(r_c[0], "=", "t", t - 1)
+        print(11)
+    elif optimizer == 0:
+        for i in range(len(r_c)):
+            print(r_c[i], end="")
+    else:  # optimizer
+        if len(r_c)>3:
+            for i in range(len(r_c)):
+                print(r_c[i], end="")
+
+    codeG_op = icg_op.copy()
+    rG = r_c.copy()
+    codeG_ls = icg_ls.copy()
+    if optimizer == 1:
+        code_generator(codeG_ls, codeG_op, rG)
+
+
+
+def code_generator(codeG_ls, codeG_op, rG):
+    dict_op = {
+        "*": "MULF",
+        "/": "DIVF",
+        "+": "ADDF",
+        "-": "SUBF"
+    }
+    pattern2 = r'([\+\-\%\*\/])'
+    print("Code Generator: ")
+    print(codeG_ls, codeG_op, rG)
+
+    r1=0
+    r2=0
+    i = 0
+    op=0
+    #id id
+    flag=0
+    for i in range(1,len(codeG_ls),2):
+        flag += 1
+        if re.match(r'id(\d+)', codeG_ls[i]) and re.match(r'id(\d+)', codeG_ls[i-1]):#ids
+            print("LDF","R2Z,",codeG_ls[i])
+            r2=1
+            print("LDF", "R1,", codeG_ls[i-1])
+            r1=1
+
+            if op<len(codeG_op):
+                if len(codeG_op)-op==1:
+                        #and '*' not in rG and '/' not in rG and '+' not in rG and '-' not in rG:
+                    print(dict_op[codeG_op[op]],"R1,","R1, R2")
+                    for j in range(len(rG)):
+                        if re.match(r't(\d+)', rG[j]):
+                            rG[j] = "R1"
+                    #codeG_op.remove(codeG_op[op])
+                    r2=0
+                else:
+                    print(dict_op[codeG_op[op]], "R2,", "R2, R1")
+                    #codeG_op.remove(codeG_op[op])
+                    r1=0
+                    for j in range(len(rG)):
+                        if re.match(r't(\d+)', rG[j]):
+                            rG[j] = "R2"
+                op+=1
+            else:
+                for j in rG:
+                    if (re.match(pattern2,j)):
+                        print(dict_op[j], "R1,", "R1, R2")
+                        for j in range(len(rG)):
+                            if re.match(r't(\d+)', rG[j]):
+                                rG[j] = "R1"
+                        r2=0
+        #number
+    for i in range(1, len(codeG_ls), 2):
+        if re.match(r'id(\d+)', codeG_ls[i]) is None or re.match(r'id(\d+)', codeG_ls[i - 1]) is None:  # nbrs
+            if re.match(r'id(\d+)', codeG_ls[i]):  # ids
+                if len(codeG_op)-op == 1:
+                    #and '*' not in rG and '/' not in rG and '+' not in rG and '-' not in rG:
+                    print("LDF", "R1,", codeG_ls[i])
+                    print(dict_op[codeG_op[op]], "R1,", "R1,", codeG_ls[i - 1])
+                    r2 = 1
+                    codeG_ls[i] = "R1"
+                else:
+                    print("LDF", "R2A,", codeG_ls[i])
+                    print(dict_op[codeG_op[op]], "R2,", "R2,", codeG_ls[i - 1])
+                    codeG_ls[i] = "R2"
+            else:#2nd nbr
+                if len(codeG_op)-op == 1:
+                        #and '*' not in rG and '/' not in rG and '+' not in rG and '-' not in rG:
+                    print("LDF", "R1,", codeG_ls[i - 1])
+                    print(dict_op[codeG_op[op]], "R1,", "R1,", codeG_ls[i])
+                    r2 = 1
+                    codeG_ls[i - 1] = "R1"
+                else:
+                    print("LDF", "R2D,", codeG_ls[i - 1])
+                    print(dict_op[codeG_op[op]], "R2,", "R2,", codeG_ls[i])
+                    r2 = 1
+                    codeG_ls[i-1] = "R2"
+            op+=1
+    # in rg list
+    # :
+    # id id t t id t t id /   t id  id t
+    op=0
+    textrg=''.join(rG)
+    x = len(re.findall(pattern2, textrg))
+    for i in range(1,len(rG)-1):
+        if re.match(pattern2,rG[i]):
+
+            if (re.match(r'id(\d+)', rG[i-1]) or re.match(r'id(\d+)', rG[i + 1])):
+                if x!=1 and re.match(r'id(\d+)', rG[i - 1]):
+                    print("LDF","R2" , rG[i-1])
+                    x -= 1
+                    print(dict_op[rG[i]], "R1, R1, R2")
+                elif x!=1:
+                    print("LDF", "R2", rG[i + 1])
+                    x-=1
+                    print(dict_op[rG[i]], "R1, R1, R2" )
+
+                if x==1 and re.match(r'id(\d+)', rG[i - 1]):
+                    print("LDF","R1" , rG[i-1])
+                    print(dict_op[rG[i]], "R1, R1,", rG[i + 1])
+                else:
+                    print("LDF", "R1", rG[i + 1])
+                    print(dict_op[rG[i]], "R1, R1,",rG[i-1] )
+            elif  (re.match(r'#(\d+)', rG[i - 1]) or re.match(r'#(\d+)', rG[i + 1])):
+                if re.match(r'#(\d+)', rG[i - 1]):
+                    print(dict_op[rG[i]], "R1, R1,", rG[i - 1])
+                else:
+                    print(dict_op[rG[i]], "R1, R1,", rG[i + 1])
+            else:
+                #elif re.match(r't(\d+)', rG[i - 1]) and re.match(r't(\d+)', rG[i + 1]):
+                print(dict_op[rG[i]], "R1, R1, R2")
+            op+=1
+
+    print("STRF ,",r[0],",R1")
+#######main
+def checknbrs(result):
+    regex = r'[0-9]+\.[0-9]+'
+    regex2 = r'[0-9]+'
+    x=-1
+    for i in range(len(result)-2):
+
+        if result[i].isdigit() or result[i].isdigit() :
+            if ('*'==result[i+1] or '/'==result[i+1]):
+                if result[i+2].isdigit():
+                    if result[i].isdigit():
+                        if '*'==result[i+1]:
+                            x=int(result[i])*int(result[i+2])
+                        else:
+                            x = int(result[i])/int(result[i+2])
+                    else:#int float
+                        if '*'==result[i+1]:
+                            x=float(result[i])*int(result[i+2])
+                        else:
+                            x = float(result[i])/int(result[i+2])
+                else:#float int or float float
+                    if result[i].isdigit():
+                        if '*'==result[i+1]:
+                            x=int(result[i])*float(result[i+2])
+                        else:
+                            x = int(result[i])/float(result[i+2])
+                    else:#float float
+                        if '*'==result[i+1]:
+                            x=float(result[i])*float(result[i+2])
+                        else:
+                            x = float(result[i])/float(result[i+2])
+                result.remove(result[i+2])
+                result[i + 1]=str(x)
+                result.remove(result[i])
+
+    return result
+l1_copy = []
+text = input("enter a source code:")
+pattern = r'([\=\+\-\%\*\/])'
+result = text
+result = result.replace(" ", "")  # remove spaces
+
+t = reset_sourceCode(result)
+#t = result.replace("pi", "3.14")
+result = t
+result = re.split(pattern, result)  # split
+
+
+result = checknbrs(result)
+print(result)
+# check float
+check = input("is " + result[0] + " float? ")
+if check == 'Y':
+    print("yes")
+else:
+    print("no")
+
+result2 = lexical_analyzer(result)
+print(result2)
+sematic = 0
+
+print("SYNTAX ANALYZER")
+createtree(result2)
+r = re.split(pattern, result2)  # split
+# print(r)
+
+sematic = 1
+print()
+print("SEMATIC ANALYZER:")
+l_inttofloat = []
+createtree(result2)
+#print(r)
+
+# print(l_inttofloat)
+RE = []
+if check == 'Y':
+    RE = inttofloat(l_inttofloat)
+
+#print(RE)
+print()
+print("ICG:")
+optimizer = 0
+create_pq(r)
+print()
+print("Optimizer:")
+optimizer = 1
+create_pq(r)
+#Y=X+6*2
+#Y=X*2+3*6
